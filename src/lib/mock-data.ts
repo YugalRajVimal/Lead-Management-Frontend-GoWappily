@@ -122,6 +122,14 @@ function seedLeads(): Lead[] {
     const createdDaysAgo = Math.floor(Math.random() * 30);
     const createdAt = new Date(Date.now() - createdDaysAgo * 86400000).toISOString();
     const status = randomFrom(STATUSES);
+
+    // Assuming 'projectName' should either be derived, random, or nullable--picking random for demo
+    const projectNames = ["Emerald Banquet", "Sunset Lawn", "Bliss Venue", "Royal Palace", "None"];
+    const projectName =
+      Math.random() > 0.7
+        ? projectNames[Math.floor(Math.random() * (projectNames.length - 1))]
+        : null;
+
     leads.push({
       _id: `lead_${i + 1}`,
       name: randomFrom(NAMES),
@@ -142,6 +150,7 @@ function seedLeads(): Lead[] {
       remarks: Math.random() > 0.6 ? "Called once, asked to call back next week." : null,
       nextAction: Math.random() > 0.5 ? "Send quotation" : null,
       originalDate: createdAt,
+      projectName: projectName, // <-- Add projectName here
       notes:
         Math.random() > 0.5
           ? [

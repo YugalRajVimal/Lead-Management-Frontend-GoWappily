@@ -41,6 +41,7 @@ export interface FollowUp {
 export interface Lead {
   _id: string;
   name: string;
+  projectName: string | null;
   phone: string;
   whatsapp: string | null;
   email: string | null;

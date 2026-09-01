@@ -196,6 +196,7 @@ export async function createLead(
       whatsapp: data.whatsapp ?? null,
       email: data.email ?? null,
       city: data.city ?? null,
+      projectName: data.projectName || "", // <-- Added to satisfy required property
       sourceSheetId: "",
       sourceSheetName: "Manual entry",
       sourceRowId: "",
@@ -504,7 +505,7 @@ export async function getDashboardFollowUps(
 
 export async function getUsers(): Promise<{ users: User[] }> {
   if (USE_MOCK) return mockDelay({ users: mockState.users });
-  return request("/users");
+  return request<{ users: User[] }>("/users");
 }
 
 export async function createUser(data: {

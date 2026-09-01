@@ -32,7 +32,10 @@ export default function UsersPage() {
     setLoading(true);
     api
       .getUsers()
-      .then((res) => setUsers(res?.users ?? []))
+      .then((res) => {
+        setUsers(res?.users ?? []);
+        console.log("Users:", res?.users ?? []);
+      })
       .finally(() => setLoading(false));
   };
 
@@ -62,7 +65,11 @@ export default function UsersPage() {
     try {
       await api.deleteUser(id);
       toast("User deleted");
-      setUsers((prev) => prev.filter((u) => u.id !== id));
+      setUsers((prev) => {
+        const updated = prev.filter((u) => u.id !== id);
+        console.log("Users after delete:", updated);
+        return updated;
+      });
     } catch (err) {
       toast(err instanceof ApiError ? err.message : "Failed to delete user", "error");
     }
@@ -71,7 +78,11 @@ export default function UsersPage() {
   const changeRole = async (id: string, newRole: string) => {
     try {
       const updated = await api.updateUser(id, { role: newRole });
-      setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)));
+      setUsers((prev) => {
+        const mapped = prev.map((u) => (u.id === id ? updated : u));
+        console.log("Users after role change:", mapped);
+        return mapped;
+      });
       toast("Role updated");
     } catch (err) {
       toast(err instanceof ApiError ? err.message : "Failed to update role", "error");
@@ -94,6 +105,11 @@ export default function UsersPage() {
 
   // Defensive: users may be undefined/null until setUsers runs after the API call
   const usersArr: User[] = Array.isArray(users) ? users : [];
+
+  // Log users whenever users state changes
+  useEffect(() => {
+    console.log("Current users state:", users);
+  }, [users]);
 
   return (
     <AppShell title="Users">

@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -16,6 +18,7 @@ const schema = z.object({
   phone: z.string().min(6, "Enter a valid phone number"),
   email: z.string().email("Enter a valid email").optional().or(z.literal("")),
   city: z.string().optional(),
+  projectName: z.string().optional(),
   status: z.string().optional(),
   priority: z.string().optional(),
   assignedTo: z.string().optional(),
@@ -45,6 +48,7 @@ export function AddLeadForm({
         phone: data.phone,
         email: data.email || null,
         city: data.city || null,
+        projectName: data.projectName || null,
         status: (data.status || "new") as never,
         priority: (data.priority || null) as never,
         assignedTo: data.assignedTo || null,
@@ -79,6 +83,10 @@ export function AddLeadForm({
           <Label>City</Label>
           <Input {...register("city")} placeholder="City" />
         </div>
+      </div>
+      <div>
+        <Label>Project Name</Label>
+        <Input {...register("projectName")} placeholder="e.g. Diwali Balloon Setup" />
       </div>
       <div>
         <Label>Email</Label>

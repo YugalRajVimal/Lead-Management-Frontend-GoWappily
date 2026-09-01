@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef, useLayoutEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -13,6 +14,7 @@ import {
   Check,
   X as XIcon,
   Tag as TagIcon,
+  Pencil,
 } from "lucide-react";
 import Link from "next/link";
 import { StatusBadge, PriorityBadge } from "@/components/ui/Badge";
@@ -21,16 +23,30 @@ import { Input, Label, Textarea } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Modal } from "@/components/ui/Modal";
+import { EditLeadForm } from "../EditLeadForm";
 import * as api from "@/lib/api-client";
 import { ApiError } from "@/lib/api-client";
-import { Lead, LeadStatus, Priority } from "@/lib/types";
+import { Lead, LeadStatus, Priority, User } from "@/lib/types";
 import { formatDateTime, formatCurrency } from "@/lib/utils";
 import { useToast } from "@/hooks/useToast";
+
+/**
+ * Remove prefix "p:" from phone number if present
+ */
+function formatLeadPhone(phone: string = ""): string {
+  if (!phone) return "";
+  return phone.startsWith("p:") ? phone.slice(2) : phone;
+}
 
 const STATUSES: LeadStatus[] = [
   "new", "contacted", "follow_up", "qualified", "converted", "lost", "junk",
 ];
 const PRIORITIES: Priority[] = ["low", "medium", "high"];
+
+function getLongestText(options: string[]) {
+  return options.reduce((a, b) => (a.length > b.length ? a : b), "");
+}
 
 export function LeadDetailContent() {
   const params = useSearchParams();
@@ -51,8 +67,59 @@ export function LeadDetailContent() {
 
   const [remarks, setRemarks] = useState("");
   const [nextAction, setNextAction] = useState("");
+  const [projectName, setProjectName] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [savingField, setSavingField] = useState<string | null>(null);
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [editOpen, setEditOpen] = useState(false);
+
+  useEffect(() => {
+    api.getUsers().then((r) => setUsers(r.users ?? [])).catch(() => setUsers([]));
+  }, []);
+
+  // Refs for measuring status/prio select min widths
+  const statusSelectRef = useRef<HTMLSelectElement>(null);
+  const prioSelectRef = useRef<HTMLSelectElement>(null);
+
+  // State for dynamic widths (default)
+  const [statusWidth, setStatusWidth] = useState<string | undefined>();
+  const [priorityWidth, setPriorityWidth] = useState<string | undefined>();
+
+  // Calculate dropdown widths based on largest option and label
+  useLayoutEffect(() => {
+    // Helper to create a dummy offscreen select and measure max option width.
+    function measureSelectWidth(optionLabels: string[], font: string) {
+      const select = document.createElement("select");
+      select.style.position = "absolute";
+      select.style.visibility = "hidden";
+      select.style.height = "auto";
+      select.style.width = "auto";
+      select.style.font = font;
+      optionLabels.forEach(lab => {
+        const opt = document.createElement("option");
+        opt.text = lab;
+        select.add(opt);
+      });
+      document.body.appendChild(select);
+      // Add a character buffer for button/arrow
+      const width = select.offsetWidth + 28;
+      document.body.removeChild(select);
+      return width;
+    }
+
+    if (statusSelectRef.current) {
+      const font = getComputedStyle(statusSelectRef.current).font;
+      // Rendered options for status
+      const statusLabels: string[] = STATUSES.map(s => s.replace("_", " "));
+      setStatusWidth(measureSelectWidth(statusLabels, font) + "px");
+    }
+    if (prioSelectRef.current) {
+      const font = getComputedStyle(prioSelectRef.current).font;
+      const prioLabels = ["No priority", ...PRIORITIES];
+      setPriorityWidth(measureSelectWidth(prioLabels, font) + "px");
+    }
+  }, []);
 
   const load = useCallback(() => {
     if (!id) {
@@ -67,6 +134,7 @@ export function LeadDetailContent() {
         setLead(l);
         setRemarks(l.remarks || "");
         setNextAction(l.nextAction || "");
+        setProjectName(l.projectName || "");
       })
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
@@ -203,12 +271,17 @@ export function LeadDetailContent() {
 
   return (
     <div className="p-4 md:p-6 max-w-4xl space-y-5">
-      <button
-        onClick={() => router.push("/leads/")}
-        className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" /> Back to Leads
-      </button>
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => router.push("/leads/")}
+          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Back to Leads
+        </button>
+        <Button variant="secondary" size="sm" onClick={() => setEditOpen(true)}>
+          <Pencil className="h-3.5 w-3.5" /> Edit Lead
+        </Button>
+      </div>
 
       {/* Header */}
       <div className="rounded-lg border border-slate-200 bg-white p-5">
@@ -217,7 +290,7 @@ export function LeadDetailContent() {
             <h2 className="text-lg font-semibold text-slate-900">{lead.name}</h2>
             <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-500">
               <span className="flex items-center gap-1.5">
-                <Phone className="h-3.5 w-3.5" /> {lead.phone}
+                <Phone className="h-3.5 w-3.5" /> {formatLeadPhone(lead.phone)}
               </span>
               {lead.whatsapp && (
                 <span className="flex items-center gap-1.5">
@@ -236,12 +309,17 @@ export function LeadDetailContent() {
               )}
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex  w-full md:flex-row flex-col gap-2">
             <Select
               value={lead.status}
               disabled={savingField === "status"}
               onChange={(e) => patch({ status: e.target.value as LeadStatus }, "status")}
-              className="w-auto"
+              ref={statusSelectRef}
+              // Dynamically set minWidth from the widest status option
+              style={{
+                minWidth: statusWidth,
+              }}
+              className=" w-1/2"
             >
               {STATUSES.map((s) => (
                 <option key={s} value={s}>
@@ -258,7 +336,12 @@ export function LeadDetailContent() {
                   "priority"
                 )
               }
-              className="w-auto"
+              ref={prioSelectRef}
+              style={{
+                minWidth: priorityWidth,
+
+              }}
+              className="w-1/2"
             >
               <option value="">No priority</option>
               {PRIORITIES.map((p) => (
@@ -271,13 +354,26 @@ export function LeadDetailContent() {
         </div>
 
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          <div>
+          {/* <div>
             <p className="text-slate-400">Source</p>
             <p className="text-slate-700 font-medium">{lead.sourceSheetName || "Manual"}</p>
           </div>
           <div>
             <p className="text-slate-400">Campaign</p>
             <p className="text-slate-700 font-medium">{lead.campaign || "—"}</p>
+          </div> */}
+          <div>
+            <p className="text-slate-400 mb-1">Project Name</p>
+            <input
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              onBlur={() =>
+                projectName !== (lead.projectName || "") &&
+                patch({ projectName: projectName || null }, "projectName")
+              }
+              placeholder="—"
+              className="w-full rounded border-0 bg-transparent p-0 text-slate-700 font-medium text-xs outline-none focus:ring-1 focus:ring-slate-300 focus:bg-slate-50 focus:px-1.5 focus:py-1 focus:rounded transition-all"
+            />
           </div>
           <div>
             <p className="text-slate-400">Service Interested</p>
@@ -458,6 +554,21 @@ export function LeadDetailContent() {
           </div>
         )}
       </div>
+
+      <Modal open={editOpen} onClose={() => setEditOpen(false)} title="Edit Lead">
+        <EditLeadForm
+          lead={lead}
+          users={users}
+          onCancel={() => setEditOpen(false)}
+          onSuccess={(updated) => {
+            setLead(updated);
+            setRemarks(updated.remarks || "");
+            setNextAction(updated.nextAction || "");
+            setProjectName((updated as any).projectName || "");
+            setEditOpen(false);
+          }}
+        />
+      </Modal>
     </div>
   );
 }
