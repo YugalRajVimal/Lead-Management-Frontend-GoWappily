@@ -142,115 +142,118 @@ export default function UsersPage() {
             <Plus className="h-3.5 w-3.5" /> Add User
           </Button>
         </div>
-        <div
-          className="rounded-xl border overflow-hidden"
-          style={{
-            background: "#fff",
-            border: `2px solid ${PALETTE.blue}`,
-            boxShadow:
-              "0 4px 24px 0 rgba(46,147,214,0.10), 0 1.5px 8px 0 #F2591C38"
-          }}
-        >
-          {loading ? (
-            <TableSkeleton rows={5} cols={4} />
-          ) : usersArr.length === 0 ? (
-            <EmptyState icon={UserCog} title="No users yet" />
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr
-                  className="border-b text-left text-xs"
-                  style={{
-                    color: PALETTE.navy,
-                    background: `linear-gradient(90deg, ${PALETTE.blue} 0%, ${PALETTE.orange} 80%)`,
-                    opacity: 0.9,
-                  }}
-                >
-                  <th className="px-4 py-2.5 font-bold" style={{ color: "#fff" }}>
-                    Name
-                  </th>
-                  <th className="px-4 py-2.5 font-bold" style={{ color: "#fff" }}>
-                    Email
-                  </th>
-                  <th className="px-4 py-2.5 font-bold" style={{ color: "#fff" }}>
-                    Role
-                  </th>
-                  <th className="px-4 py-2.5 font-bold" style={{ color: "#fff" }}>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {usersArr.map((u) => (
+        {/* Add scroll container here for table */}
+        <div className="w-full overflow-x-auto">
+          <div
+            className="rounded-xl border min-w-[520px] overflow-hidden"
+            style={{
+              background: "#fff",
+              border: `2px solid ${PALETTE.blue}`,
+              boxShadow:
+                "0 4px 24px 0 rgba(46,147,214,0.10), 0 1.5px 8px 0 #F2591C38"
+            }}
+          >
+            {loading ? (
+              <TableSkeleton rows={5} cols={4} />
+            ) : usersArr.length === 0 ? (
+              <EmptyState icon={UserCog} title="No users yet" />
+            ) : (
+              <table className="w-full text-sm">
+                <thead>
                   <tr
-                    key={u.id}
-                    className="border-b last:border-0"
+                    className="border-b text-left text-xs"
                     style={{
-                      borderColor: PALETTE.blueBg,
-                      background:
-                        u.role === "admin"
-                          ? "linear-gradient(90deg, #fff 70%, #F3F8FB 100%)"
-                          : "#fff"
+                      color: PALETTE.navy,
+                      background: `linear-gradient(90deg, ${PALETTE.blue} 0%, ${PALETTE.orange} 80%)`,
+                      opacity: 0.9,
                     }}
                   >
-                    <td
-                      className="px-4 py-2.5 font-medium"
-                      style={{ color: PALETTE.navy }}
-                    >
-                      {u.name}
-                    </td>
-                    <td
-                      className="px-4 py-2.5"
-                      style={{ color: "#637381" }}
-                    >
-                      {u.email}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <Select
-                        value={u.role}
-                        onChange={(e) => changeRole(u.id, e.target.value)}
-                        className="w-auto"
-                        style={{
-                          backgroundColor: PALETTE.blueBg,
-                          color: PALETTE.navy,
-                          borderColor: PALETTE.blue,
-                          fontWeight: 500,
-                        }}
-                      >
-                        <option
-                          value="admin"
-                          style={{
-                            color: PALETTE.orange,
-                            fontWeight: 600,
-                            background: "#fff",
-                          }}
-                        >admin</option>
-                        <option
-                          value="agent"
-                          style={{
-                            color: PALETTE.blue,
-                            fontWeight: 600,
-                            background: "#fff",
-                          }}
-                        >agent</option>
-                      </Select>
-                    </td>
-                    <td className="px-4 py-2.5 text-right">
-                      <button
-                        onClick={() => remove(u.id)}
-                        style={{
-                          color: PALETTE.navyLight,
-                          transition: "color 0.2s",
-                        }}
-                        className="hover:text-red-500"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </td>
+                    <th className="px-4 py-2.5 font-bold" style={{ color: "#fff" }}>
+                      Name
+                    </th>
+                    <th className="px-4 py-2.5 font-bold" style={{ color: "#fff" }}>
+                      Email
+                    </th>
+                    <th className="px-4 py-2.5 font-bold" style={{ color: "#fff" }}>
+                      Role
+                    </th>
+                    <th className="px-4 py-2.5 font-bold" style={{ color: "#fff" }}>
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                <tbody>
+                  {usersArr.map((u) => (
+                    <tr
+                      key={u.id}
+                      className="border-b last:border-0"
+                      style={{
+                        borderColor: PALETTE.blueBg,
+                        background:
+                          u.role === "admin"
+                            ? "linear-gradient(90deg, #fff 70%, #F3F8FB 100%)"
+                            : "#fff"
+                      }}
+                    >
+                      <td
+                        className="px-4 py-2.5 font-medium"
+                        style={{ color: PALETTE.navy }}
+                      >
+                        {u.name}
+                      </td>
+                      <td
+                        className="px-4 py-2.5"
+                        style={{ color: "#637381" }}
+                      >
+                        {u.email}
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <Select
+                          value={u.role}
+                          onChange={(e) => changeRole(u.id, e.target.value)}
+                          className="w-auto"
+                          style={{
+                            backgroundColor: PALETTE.blueBg,
+                            color: PALETTE.navy,
+                            borderColor: PALETTE.blue,
+                            fontWeight: 500,
+                          }}
+                        >
+                          <option
+                            value="admin"
+                            style={{
+                              color: PALETTE.orange,
+                              fontWeight: 600,
+                              background: "#fff",
+                            }}
+                          >admin</option>
+                          <option
+                            value="agent"
+                            style={{
+                              color: PALETTE.blue,
+                              fontWeight: 600,
+                              background: "#fff",
+                            }}
+                          >agent</option>
+                        </Select>
+                      </td>
+                      <td className="px-4 py-2.5 text-right">
+                        <button
+                          onClick={() => remove(u.id)}
+                          style={{
+                            color: PALETTE.navyLight,
+                            transition: "color 0.2s",
+                          }}
+                          className="hover:text-red-500"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
       </div>
 
