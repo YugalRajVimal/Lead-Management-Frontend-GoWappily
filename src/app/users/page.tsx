@@ -15,6 +15,15 @@ import { User } from "@/lib/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 
+// Logo palette colors
+const PALETTE = {
+  blue: "#2E93D6",
+  orange: "#F2591C",
+  navy: "#0B2C5F",
+  blueBg: "#F3F8FB",
+  navyLight: "#E9EFF6",
+};
+
 export default function UsersPage() {
   const { user: me } = useAuth();
   const { toast } = useToast();
@@ -113,13 +122,35 @@ export default function UsersPage() {
 
   return (
     <AppShell title="Users">
-      <div className="p-4 md:p-6 space-y-4 max-w-3xl">
+      <div
+        className="p-4 md:p-6 space-y-4"
+        style={{
+          background: `linear-gradient(135deg, ${PALETTE.blueBg} 0%, ${PALETTE.navyLight} 100%)`,
+          minHeight: "100vh",
+        }}
+      >
         <div className="flex justify-end">
-          <Button onClick={() => setAddOpen(true)}>
+          <Button
+            onClick={() => setAddOpen(true)}
+            style={{
+              background: `linear-gradient(90deg, ${PALETTE.blue} 60%, ${PALETTE.orange} 100%)`,
+              color: "#fff",
+              fontWeight: 500,
+              letterSpacing: "0.01em",
+            }}
+          >
             <Plus className="h-3.5 w-3.5" /> Add User
           </Button>
         </div>
-        <div className="rounded-lg border border-slate-200 bg-white overflow-hidden">
+        <div
+          className="rounded-xl border overflow-hidden"
+          style={{
+            background: "#fff",
+            border: `2px solid ${PALETTE.blue}`,
+            boxShadow:
+              "0 4px 24px 0 rgba(46,147,214,0.10), 0 1.5px 8px 0 #F2591C38"
+          }}
+        >
           {loading ? (
             <TableSkeleton rows={5} cols={4} />
           ) : usersArr.length === 0 ? (
@@ -127,32 +158,90 @@ export default function UsersPage() {
           ) : (
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-xs text-slate-500">
-                  <th className="px-4 py-2.5 font-medium">Name</th>
-                  <th className="px-4 py-2.5 font-medium">Email</th>
-                  <th className="px-4 py-2.5 font-medium">Role</th>
-                  <th className="px-4 py-2.5 font-medium"></th>
+                <tr
+                  className="border-b text-left text-xs"
+                  style={{
+                    color: PALETTE.navy,
+                    background: `linear-gradient(90deg, ${PALETTE.blue} 0%, ${PALETTE.orange} 80%)`,
+                    opacity: 0.9,
+                  }}
+                >
+                  <th className="px-4 py-2.5 font-bold" style={{ color: "#fff" }}>
+                    Name
+                  </th>
+                  <th className="px-4 py-2.5 font-bold" style={{ color: "#fff" }}>
+                    Email
+                  </th>
+                  <th className="px-4 py-2.5 font-bold" style={{ color: "#fff" }}>
+                    Role
+                  </th>
+                  <th className="px-4 py-2.5 font-bold" style={{ color: "#fff" }}>
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {usersArr.map((u) => (
-                  <tr key={u.id} className="border-b border-slate-50 last:border-0">
-                    <td className="px-4 py-2.5 font-medium text-slate-900">{u.name}</td>
-                    <td className="px-4 py-2.5 text-slate-600">{u.email}</td>
+                  <tr
+                    key={u.id}
+                    className="border-b last:border-0"
+                    style={{
+                      borderColor: PALETTE.blueBg,
+                      background:
+                        u.role === "admin"
+                          ? "linear-gradient(90deg, #fff 70%, #F3F8FB 100%)"
+                          : "#fff"
+                    }}
+                  >
+                    <td
+                      className="px-4 py-2.5 font-medium"
+                      style={{ color: PALETTE.navy }}
+                    >
+                      {u.name}
+                    </td>
+                    <td
+                      className="px-4 py-2.5"
+                      style={{ color: "#637381" }}
+                    >
+                      {u.email}
+                    </td>
                     <td className="px-4 py-2.5">
                       <Select
                         value={u.role}
                         onChange={(e) => changeRole(u.id, e.target.value)}
                         className="w-auto"
+                        style={{
+                          backgroundColor: PALETTE.blueBg,
+                          color: PALETTE.navy,
+                          borderColor: PALETTE.blue,
+                          fontWeight: 500,
+                        }}
                       >
-                        <option value="admin">admin</option>
-                        <option value="agent">agent</option>
+                        <option
+                          value="admin"
+                          style={{
+                            color: PALETTE.orange,
+                            fontWeight: 600,
+                            background: "#fff",
+                          }}
+                        >admin</option>
+                        <option
+                          value="agent"
+                          style={{
+                            color: PALETTE.blue,
+                            fontWeight: 600,
+                            background: "#fff",
+                          }}
+                        >agent</option>
                       </Select>
                     </td>
                     <td className="px-4 py-2.5 text-right">
                       <button
                         onClick={() => remove(u.id)}
-                        className="text-slate-300 hover:text-red-500"
+                        style={{
+                          color: PALETTE.navyLight,
+                          transition: "color 0.2s",
+                        }}
+                        className="hover:text-red-500"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
@@ -168,26 +257,90 @@ export default function UsersPage() {
       <Modal open={addOpen} onClose={() => setAddOpen(false)} title="Add User">
         <div className="space-y-3.5">
           <div>
-            <Label>Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
+            <Label className="text-[#0B2C5F] font-medium">
+       
+              Name
+            </Label>
+            <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              style={{
+                borderColor: PALETTE.blue,
+                background: PALETTE.blueBg,
+                color: PALETTE.navy,
+                fontWeight: 500,
+              }}
+            />
           </div>
           <div>
-            <Label>Email</Label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Label className="text-[#0B2C5F] font-medium">
+       
+              Email
+            </Label>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={{
+                borderColor: PALETTE.blue,
+                background: PALETTE.blueBg,
+                color: PALETTE.navy,
+                fontWeight: 500,
+              }}
+            />
           </div>
           <div>
-            <Label>Password</Label>
+            <Label className="text-[#0B2C5F] font-medium">
+       
+              Password
+            </Label>
             <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              style={{
+                borderColor: PALETTE.blue,
+                background: PALETTE.blueBg,
+                color: PALETTE.navy,
+                fontWeight: 500,
+              }}
             />
           </div>
           <div>
-            <Label>Role</Label>
-            <Select value={role} onChange={(e) => setRole(e.target.value)}>
-              <option value="admin">admin</option>
-              <option value="agent">agent</option>
+            <Label className="text-[#0B2C5F] font-medium">
+       
+              Role
+            </Label>
+            <Select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              style={{
+                backgroundColor: PALETTE.blueBg,
+                borderColor: PALETTE.blue,
+                color: PALETTE.navy,
+                fontWeight: 500,
+              }}
+            >
+              <option
+                value="admin"
+                style={{
+                  color: PALETTE.orange,
+                  fontWeight: 600,
+                  background: "#fff",
+                }}
+              >
+                admin
+              </option>
+              <option
+                value="agent"
+                style={{
+                  color: PALETTE.blue,
+                  fontWeight: 600,
+                  background: "#fff",
+                }}
+              >
+                agent
+              </option>
             </Select>
           </div>
           <div className="flex justify-end pt-1">
@@ -195,6 +348,12 @@ export default function UsersPage() {
               onClick={create}
               loading={submitting}
               disabled={!name || !email || !password}
+              style={{
+                background: `linear-gradient(90deg, ${PALETTE.blue} 60%, ${PALETTE.orange} 100%)`,
+                color: "#fff",
+                fontWeight: 600,
+                letterSpacing: "0.01em",
+              }}
             >
               Create User
             </Button>

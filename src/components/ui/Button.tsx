@@ -1,3 +1,4 @@
+
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { ButtonHTMLAttributes } from "react";
@@ -18,9 +19,11 @@ export function Button({
   ...props
 }: ButtonProps) {
   const variants = {
-    primary: "bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-400",
+    // GoWappily brand orange, no gradient
+    primary:
+      "bg-[#F2591C] text-white shadow-sm hover:brightness-105 disabled:opacity-60 disabled:bg-slate-300",
     secondary:
-      "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50",
+      "bg-white text-[#0B2C5F] border border-slate-200 hover:bg-slate-50 hover:border-[#2E93D6]/40",
     ghost: "text-slate-600 hover:bg-slate-100",
     danger: "bg-red-600 text-white hover:bg-red-700",
   };
@@ -31,7 +34,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-1.5 rounded-md font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60",
+        "inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-all disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2E93D6]/40 focus-visible:ring-offset-1",
         variants[variant],
         sizes[size],
         className

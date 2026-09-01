@@ -39,6 +39,11 @@ const FIELD_LABELS: { key: keyof ColumnMapping; label: string }[] = [
   { key: "remarks", label: "Remarks" },
 ];
 
+// Palette variables
+const LOGO_BLUE = "#2E93D6";
+const LOGO_ORANGE = "#F2591C";
+const LOGO_NAVY = "#0B2C5F";
+
 export function SourceDetailContent() {
   const params = useSearchParams();
   const router = useRouter();
@@ -160,7 +165,16 @@ export function SourceDetailContent() {
           description="This source may have been deleted, or the link is invalid."
           action={
             <Link href="/sources/">
-              <Button variant="secondary">Back to Sources</Button>
+              <Button
+                variant="secondary"
+                style={{
+                  borderColor: LOGO_BLUE,
+                  color: LOGO_BLUE,
+                  backgroundColor: "#fff",
+                }}
+              >
+                Back to Sources
+              </Button>
             </Link>
           }
         />
@@ -169,19 +183,50 @@ export function SourceDetailContent() {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-3xl space-y-5">
+    <div
+      className="p-4 md:p-6 space-y-5"
+      style={{
+        background: `linear-gradient(135deg, ${LOGO_BLUE}0D 0%, ${LOGO_NAVY}0d 100%)`,
+        minHeight: "100vh",
+      }}
+    >
       <button
         onClick={() => router.push("/sources/")}
-        className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900"
+        className="flex items-center gap-1.5 text-xs font-semibold"
+        style={{
+          color: LOGO_BLUE,
+        }}
       >
         <ArrowLeft className="h-3.5 w-3.5" /> Back to Sources
       </button>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-5">
+      <div
+        className="rounded-lg border p-5 shadow"
+        style={{
+          borderColor: LOGO_BLUE,
+          background: "#fff",
+        }}
+      >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">{source.name}</h2>
-            <p className="text-xs text-slate-400 mt-0.5 break-all">{source.sheetUrl}</p>
+            <h2
+              className="text-lg font-bold"
+              style={{
+                color: LOGO_NAVY,
+              }}
+            >
+              {source.name}
+            </h2>
+            <p
+              className="text-xs mt-0.5 break-all"
+              style={{
+                color: LOGO_BLUE,
+                fontWeight: 500,
+                letterSpacing: 0.2,
+              }}
+            >
+              {source.sheetUrl}
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <SourceStatusBadge status={source.status} />
@@ -190,35 +235,69 @@ export function SourceDetailContent() {
         </div>
 
         {source.lastSyncError && (
-          <p className="mt-3 flex items-center gap-1.5 rounded-md bg-red-50 px-3 py-2 text-xs text-red-600">
+          <p
+            className="mt-3 flex items-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium"
+            style={{
+              background: "#FFEBE6",
+              color: LOGO_ORANGE,
+              border: `1px solid ${LOGO_ORANGE}99`,
+            }}
+          >
             <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {source.lastSyncError}
           </p>
         )}
 
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
           <div>
-            <p className="text-slate-400">Last synced</p>
-            <p className="text-slate-700 font-medium">{formatDateTime(source.lastSyncAt)}</p>
+            <p className="font-semibold" style={{ color: LOGO_BLUE }}>Last synced</p>
+            <p style={{ color: LOGO_NAVY, fontWeight: 500 }}>
+              {formatDateTime(source.lastSyncAt)}
+            </p>
           </div>
           <div>
-            <p className="text-slate-400">Rows imported</p>
-            <p className="text-slate-700 font-medium">{source.rowsImported}</p>
+            <p className="font-semibold" style={{ color: LOGO_BLUE }}>Rows imported</p>
+            <p style={{ color: LOGO_NAVY, fontWeight: 500 }}>
+              {source.rowsImported}
+            </p>
           </div>
           <div>
-            <p className="text-slate-400">Sync interval</p>
-            <p className="text-slate-700 font-medium">{source.syncIntervalMinutes}m</p>
+            <p className="font-semibold" style={{ color: LOGO_BLUE }}>Sync interval</p>
+            <p style={{ color: LOGO_NAVY, fontWeight: 500 }}>
+              {source.syncIntervalMinutes}m
+            </p>
           </div>
           <div>
-            <p className="text-slate-400">Created</p>
-            <p className="text-slate-700 font-medium">{formatDateTime(source.createdAt)}</p>
+            <p className="font-semibold" style={{ color: LOGO_BLUE }}>Created</p>
+            <p style={{ color: LOGO_NAVY, fontWeight: 500 }}>
+              {formatDateTime(source.createdAt)}
+            </p>
           </div>
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2">
-          <Button variant="secondary" size="sm" onClick={syncNow} loading={syncing}>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={syncNow}
+            loading={syncing}
+            style={{
+              color: "#fff",
+              background: LOGO_BLUE,
+              borderColor: LOGO_BLUE,
+            }}
+          >
             <RefreshCw className="h-3.5 w-3.5" /> Sync now
           </Button>
-          <Button variant="secondary" size="sm" onClick={togglePause}>
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={togglePause}
+            style={{
+              color: "#fff",
+              background: source.status === "paused" ? LOGO_BLUE : LOGO_NAVY,
+              borderColor: source.status === "paused" ? LOGO_BLUE : LOGO_NAVY,
+            }}
+          >
             {source.status === "paused" ? (
               <>
                 <Play className="h-3.5 w-3.5" /> Resume
@@ -234,6 +313,11 @@ export function SourceDetailContent() {
             size="sm"
             className="ml-auto"
             onClick={() => setDeleteOpen(true)}
+            style={{
+              color: "#fff",
+              background: LOGO_ORANGE,
+              borderColor: LOGO_ORANGE,
+            }}
           >
             <Trash2 className="h-3.5 w-3.5" /> Delete Source
           </Button>
@@ -241,24 +325,50 @@ export function SourceDetailContent() {
       </div>
 
       {/* Editable settings */}
-      <div className="rounded-lg border border-slate-200 bg-white p-5 space-y-4">
-        <h3 className="text-sm font-semibold text-slate-900">Settings</h3>
+      <div
+        className="rounded-lg border p-5 space-y-4"
+        style={{
+          borderColor: LOGO_NAVY,
+          background: "#F8FAFC"
+        }}
+      >
+        <h3
+          className="text-sm font-semibold"
+          style={{ color: LOGO_NAVY, letterSpacing: 0.5 }}
+        >
+          Settings
+        </h3>
         <div>
-          <Label>Name</Label>
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
+          <Label className="text-[#0B2C5F]">Name</Label>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={{
+              borderColor: LOGO_BLUE,
+              color: LOGO_NAVY,
+            }}
+          />
         </div>
         <div>
-          <Label>Tags</Label>
+          <Label className="text-[#0B2C5F]">Tags</Label>
           <div className="flex flex-wrap items-center gap-1.5">
             {tags.map((t) => (
               <span
                 key={t}
-                className="flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1 text-xs text-slate-600"
+                className="flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold"
+                style={{
+                  backgroundColor: LOGO_BLUE + "22",
+                  color: LOGO_NAVY,
+                  border: `1px solid ${LOGO_BLUE}`,
+                }}
               >
                 {t}
                 <button
                   onClick={() => setTags(tags.filter((x) => x !== t))}
-                  className="text-slate-400 hover:text-slate-700"
+                  className="transition-colors"
+                  style={{
+                    color: LOGO_BLUE,
+                  }}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -277,33 +387,52 @@ export function SourceDetailContent() {
               }}
               placeholder="+ add tag, press Enter"
               className="w-40"
+              style={{
+                borderColor: LOGO_BLUE,
+                color: LOGO_NAVY,
+                background: "#fff"
+              }}
             />
           </div>
         </div>
         <div>
-          <Label>Sync interval (minutes)</Label>
+          <Label className="text-[#0B2C5F]">Sync interval (minutes)</Label>
           <Input
             type="number"
             min={5}
             value={syncInterval}
             onChange={(e) => setSyncInterval(Number(e.target.value))}
             className="w-32"
+            style={{
+              borderColor: LOGO_BLUE,
+              color: LOGO_NAVY,
+            }}
           />
         </div>
 
         <div>
-          <Label>Column mapping</Label>
+          <Label className="text-[#0B2C5F]">Column mapping</Label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
             {mapping &&
               FIELD_LABELS.map(({ key, label }) => (
                 <div key={key}>
-                  <label className="mb-1 block text-[11px] text-slate-500">{label}</label>
+                  <label
+                    className="mb-1 block text-[11px] font-medium"
+                    style={{ color: LOGO_BLUE }}
+                  >
+                    {label}
+                  </label>
                   <Input
                     value={mapping[key] || ""}
                     onChange={(e) =>
                       setMapping((m) => (m ? { ...m, [key]: e.target.value || null } : m))
                     }
                     placeholder="sheet column header"
+                    style={{
+                      borderColor: LOGO_BLUE,
+                      color: LOGO_NAVY,
+                      background: "#fff"
+                    }}
                   />
                 </div>
               ))}
@@ -311,23 +440,54 @@ export function SourceDetailContent() {
         </div>
 
         <div className="flex justify-end pt-1">
-          <Button onClick={saveSettings} loading={saving}>
+          <Button
+            onClick={saveSettings}
+            loading={saving}
+            style={{
+              background: LOGO_BLUE,
+              color: "#fff",
+              borderColor: LOGO_BLUE,
+            }}
+          >
             Save Changes
           </Button>
         </div>
       </div>
 
-      <Modal open={deleteOpen} onClose={() => setDeleteOpen(false)} title="Delete Source" size="sm">
-        <p className="text-sm text-slate-600">
-          Are you sure you want to delete <strong>{source.name}</strong>? Future
-          syncing will stop, but leads already imported from this source will{" "}
+      <Modal
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        title="Delete Source"
+   
+        size="sm"
+      >
+        <p className="text-sm" style={{ color: LOGO_NAVY }}>
+          Are you sure you want to delete <strong style={{ color: LOGO_BLUE }}>{source.name}</strong>?{" "}
+          Future syncing will stop, but leads already imported from this source will{" "}
           <strong>not</strong> be deleted.
         </p>
         <div className="mt-4 flex justify-end gap-2">
-          <Button variant="secondary" onClick={() => setDeleteOpen(false)}>
+          <Button
+            variant="secondary"
+            onClick={() => setDeleteOpen(false)}
+            style={{
+              borderColor: LOGO_BLUE,
+              color: LOGO_BLUE,
+              background: "#fff",
+            }}
+          >
             Cancel
           </Button>
-          <Button variant="danger" onClick={doDelete} loading={deleting}>
+          <Button
+            variant="danger"
+            onClick={doDelete}
+            loading={deleting}
+            style={{
+              background: LOGO_ORANGE,
+              color: "#fff",
+              borderColor: LOGO_ORANGE,
+            }}
+          >
             Delete
           </Button>
         </div>
