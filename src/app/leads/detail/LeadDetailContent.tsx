@@ -244,7 +244,7 @@
 
 //   if (loading) {
 //     return (
-//       <div className="p-6 space-y-3 max-w-4xl">
+//       <div className="p-6 space-y-3 ">
 //         <Skeleton className="h-6 w-48" />
 //         <Skeleton className="h-40 w-full" />
 //         <Skeleton className="h-40 w-full" />
@@ -254,7 +254,7 @@
 
 //   if (notFound || !lead) {
 //     return (
-//       <div className="p-6 max-w-4xl">
+//       <div className="p-6 ">
 //         <EmptyState
 //           icon={Phone}
 //           title="Lead not found"
@@ -270,7 +270,7 @@
 //   }
 
 //   return (
-//     <div className="p-4 md:p-6 max-w-4xl space-y-5">
+//     <div className="p-4 md:p-6  space-y-5">
 //       <div className="flex items-center justify-between">
 //         <button
 //           onClick={() => router.push("/leads/")}
@@ -837,7 +837,7 @@ export function LeadDetailContent() {
 
   if (loading) {
     return (
-      <div className="p-4 md:p-6 space-y-4 max-w-4xl">
+      <div className="p-4 md:p-6 space-y-4 ">
         <Skeleton className="h-6 w-48" />
         <Skeleton className="h-32 w-full rounded-xl" />
         <Skeleton className="h-40 w-full rounded-xl" />
@@ -848,7 +848,7 @@ export function LeadDetailContent() {
 
   if (notFound || !lead) {
     return (
-      <div className="p-6 max-w-4xl">
+      <div className="p-6 ">
         <EmptyState
           icon={Phone}
           title="Lead not found"

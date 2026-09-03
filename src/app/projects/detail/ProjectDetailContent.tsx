@@ -190,7 +190,7 @@ export function ProjectDetailContent() {
 
   if (loading) {
     return (
-      <div className="p-6 space-y-3 max-w-4xl">
+      <div className="p-6 space-y-3 ">
         <Skeleton className="h-6 w-48" />
         <Skeleton className="h-40 w-full" />
         <Skeleton className="h-40 w-full" />
@@ -200,7 +200,7 @@ export function ProjectDetailContent() {
 
   if (notFound || !project) {
     return (
-      <div className="p-6 max-w-4xl">
+      <div className="p-6 ">
         <EmptyState
           icon={FolderKanban}
           title="Project not found"
@@ -216,7 +216,7 @@ export function ProjectDetailContent() {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-4xl space-y-5">
+    <div className="p-4 md:p-6 space-y-5">
       <button
         onClick={() => router.push("/projects/")}
         className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900"
