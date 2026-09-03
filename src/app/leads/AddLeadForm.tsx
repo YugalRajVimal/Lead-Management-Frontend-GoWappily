@@ -97,18 +97,27 @@ export function AddLeadForm({
         <div>
           <Label>Status</Label>
           <Select {...register("status")} defaultValue="new">
-            {["new", "contacted", "follow_up", "qualified", "converted", "lost", "junk"].map(
-              (s) => (
-                <option key={s} value={s}>
-                  {s.replace("_", " ")}
-                </option>
-              )
-            )}
+            {[
+              "new",
+              "not contacted",
+              "call later",
+              "pitched",
+              "quotation send",
+              "follow up",
+              "converted",
+              "lost",
+              "junk"
+            ].map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
           </Select>
+     
         </div>
         <div>
           <Label>Priority</Label>
-          <Select {...register("priority")} defaultValue="">
+          <Select {...register("priority")} defaultValue="high">
             <option value="">None</option>
             {["low", "medium", "high"].map((p) => (
               <option key={p} value={p}>
@@ -117,6 +126,7 @@ export function AddLeadForm({
             ))}
           </Select>
         </div>
+   
         <div>
           <Label>Assign to</Label>
           <Select {...register("assignedTo")} defaultValue="">

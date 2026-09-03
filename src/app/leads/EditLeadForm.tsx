@@ -157,14 +157,23 @@ export function EditLeadForm({
         <div>
           <Label>Status</Label>
           <Select {...register("status")}>
-            {["new", "contacted", "follow_up", "qualified", "converted", "lost", "junk"].map(
-              (s) => (
-                <option key={s} value={s}>
-                  {s.replace("_", " ")}
-                </option>
-              )
-            )}
+            {[
+              "new",
+              "not contacted",
+              "call later",
+              "pitched",
+              "quotation send",
+              "follow up",
+              "converted",
+              "lost",
+              "junk"
+            ].map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
           </Select>
+     
         </div>
         <div>
           <Label>Priority</Label>
